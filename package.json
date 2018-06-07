@@ -2,6 +2,7 @@
   "name": "video-table",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://Amira-Mohiey.github.io/videos-table-react",
   "dependencies": {
     "@material-ui/core": "^1.2.0",
     "@material-ui/icons": "^1.1.0",
