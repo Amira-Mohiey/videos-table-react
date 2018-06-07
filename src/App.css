@@ -1,0 +1,18 @@
+
+body{
+  background: #f7f7f7
+}
+.table{
+  margin: 2% !important;
+  width: auto !important;
+  text-align: center;
+}
+.filter{
+  float: right !important;
+  margin: 2% !important;
+
+
+}
+.result{
+  padding: 2%
+}
