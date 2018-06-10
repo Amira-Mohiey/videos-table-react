@@ -27,15 +27,6 @@ export default class VideoTable extends Component {
 
   componentDidMount() {
     var { page, videosPerPage } = this.state;
-    // tableService(page, videosPerPage).then(data => {
-    //   console.log(data);
-    //   this.setState({
-    //     videos: data.videos,
-    //     filteredVideos: data.videos.slice(0, page * videosPerPage),
-    //     total_pages: Math.ceil(data.total / this.state.videosPerPage)
-    //   });
-    // });
-
     var data = tableService(page, videosPerPage);
     this.setState({
       videos: data.videos,
