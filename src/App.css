@@ -16,3 +16,7 @@ body{
 .result{
   padding: 2%
 }
+.loader{
+  position: relative;
+  left: 50%;
+}
