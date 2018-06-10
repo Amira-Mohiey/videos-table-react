@@ -1,4 +1,4 @@
-export function tableService() {
+export function tableService(page,videosPerPage) {
   var tableData = [
     {
       title: "نقد فيلم Vignette | Mission: Impossible Rogue Nation",
@@ -505,8 +505,22 @@ export function tableService() {
       published: "2015-08-12 17:43:34"
     }
   ];
+
+  var newVideos = tableData.slice(
+    (page - 1) * videosPerPage,
+    page * videosPerPage
+  );
+
+  var data={videos:newVideos,total:tableData.length}
+  return data
   // return new Promise((resolve, reject)=>{
-  //     resolve(tableData)
+  //   var newVideos = tableData.slice(
+  //       (page - 1) * videosPerPage,
+  //       page * videosPerPage
+  //     );
+ 
+  //     var data={videos:newVideos,total:tableData.length}
+  //     resolve(data)
   // })
-  return tableData;
+
 }

@@ -6,12 +6,8 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import ArrowUpIcon from "@material-ui/icons/ArrowDropUp";
-import ArrowDownIcon from "@material-ui/icons/ArrowDropDown";
-import Button from "@material-ui/core/Button";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 import SearchIcon from "@material-ui/icons/Search";
 import InfiniteScroll from "react-infinite-scroller";
@@ -29,14 +25,22 @@ export default class VideoTable extends Component {
     more: true
   };
 
-  componentWillMount() {
+  componentDidMount() {
     var { page, videosPerPage } = this.state;
-    var videos = tableService();
+    // tableService(page, videosPerPage).then(data => {
+    //   console.log(data);
+    //   this.setState({
+    //     videos: data.videos,
+    //     filteredVideos: data.videos.slice(0, page * videosPerPage),
+    //     total_pages: Math.ceil(data.total / this.state.videosPerPage)
+    //   });
+    // });
 
+    var data = tableService(page, videosPerPage);
     this.setState({
-      videos,
-      filteredVideos: videos.slice(0, page * videosPerPage),
-      total_pages: Math.ceil(videos.length / this.state.videosPerPage)
+      videos: data.videos,
+      filteredVideos: data.videos.slice(0, page * videosPerPage),
+      total_pages: Math.ceil(data.total / this.state.videosPerPage)
     });
   }
 
@@ -50,49 +54,47 @@ export default class VideoTable extends Component {
   };
 
   fetchMoreData = () => {
-    var { page, videosPerPage, filteredVideos } = this.state;
-    if (this.state.videos && page <= this.state.total_pages) {
+    var { page, videosPerPage, filteredVideos, total_pages } = this.state;
+    if (page <= total_pages) {
       this.setState({ page: this.state.page + 1 }, () => {
-        var newVideos = this.state.videos.slice(
-          (page - 1) * videosPerPage,
-          page * videosPerPage
-        );
-        filteredVideos = filteredVideos.concat(newVideos);
+        var data = tableService(this.state.page, videosPerPage);
+        filteredVideos = filteredVideos.concat(data.videos);
         this.setState({ filteredVideos });
       });
     } else {
-      this.setState({ more: false });
+      this.setState({ more: false }, console.log("false"));
     }
   };
-
   handleSortClick = (name, order) => event => {
     switch (name) {
       case "views":
-        this.state.viewsOrder == "asc"
+        this.state.viewsOrder === "asc"
           ? this.setState({ viewsOrder: "desc" })
           : this.setState({ viewsOrder: "asc" });
         break;
       case "shares":
-        this.state.shareOrder == "asc"
+        this.state.shareOrder === "asc"
           ? this.setState({ shareOrder: "desc" })
           : this.setState({ shareOrder: "asc" });
         break;
       case "likes":
-        this.state.likesOrder == "asc"
+        this.state.likesOrder === "asc"
           ? this.setState({ likesOrder: "desc" })
           : this.setState({ likesOrder: "asc" });
+        break;
+      default:
         break;
     }
     this.sort(name, order);
   };
 
   sort = (name, order) => {
-    var videos = this.state.filteredVideos;
+    var filteredVideos = this.state.filteredVideos;
     order === "desc"
-      ? videos.sort((a, b) => (b[name] < a[name] ? -1 : 1))
-      : videos.sort((a, b) => (a[name] < b[name] ? -1 : 1));
+      ? filteredVideos.sort((a, b) => (b[name] < a[name] ? -1 : 1))
+      : filteredVideos.sort((a, b) => (a[name] < b[name] ? -1 : 1));
 
-    this.setState({ videos });
+    this.setState({ filteredVideos });
   };
 
   renderTitleFilter = () => {
@@ -210,19 +212,20 @@ export default class VideoTable extends Component {
   render() {
     return (
       <div>
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={this.fetchMoreData}
-          hasMore={this.state.more}
-          loader={
-            <div key={0} className="loader">
-              {" "}
-              <CircularProgress size={100} />{" "}
-            </div>
-          }
-        >
-          {this.renderTable()}
-        </InfiniteScroll>
+        {this.state.videos.length > 0 && (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={this.fetchMoreData}
+            hasMore={this.state.more}
+            loader={
+              <div key={0} className="loader">
+                <CircularProgress size={100} />
+              </div>
+            }
+          >
+            {this.renderTable()}
+          </InfiniteScroll>
+        )}
       </div>
     );
   }
